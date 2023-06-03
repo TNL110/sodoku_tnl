@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" type="image/x-icon" href="logo.png" />
+    <title>Sudoku Multiplayer</title>
+</head>
+<body>
+    <img id="logo" src="logo.png" height="200" style="position: absolute; top: 0; left:0; right:0; margin:auto; display: none">
+    <p id="version">v1.3</p>
+    <div class="container" style="display: none">
+        <button onclick="quitGame()">Quit</button>
+        <button onclick="$('#chatWindow').fadeIn()" id="chatBtn">Chat (0) </button>
+        <div id="user1Side">
+            <h1>You</h1>
+            <h2 id="myScore">0 Points</h2>
+        </div>
+        <div id="user2Side">
+            <h1>Opponent</h1>
+            <h2 id="opponentScore">0 Points</h2>
+        </div>
+        <div id="chatWindow">
+            <button id="closeChat" onclick="$('#chatWindow').fadeOut()">X</button>
+            <ul id="messages"></ul>
+            <input id="inputChat" type="text" maxlength="300" class="form-control input-sm chat_input" placeholder="Write your message here...">
+        </div>
+    </div>
+
+    <div id="singleMatch" style="display: none"></div>
+
+    <div id="menu" style="display:none">
+        <div class="lobby-window">
+            <h2 style="padding: 20px">Lobby</h2>
+            <ul id="games-list">
+                <li><span>People 1: </span><input type="text" id="people1"></li>
+                <br>
+                <li><span>People 2: </span><input type="text" id="people2"></li>
+                <br>
+                <li><span>People 3: </span><input type="text" id="people3"></li>
+                <br>
+                <li><span>People 4: </span><input type="text" id="people4"></li>
+                <br>
+                <div class='input-group mt-2' style='width:340px !important'>
+                    <select class='custom-select' id='gameMode'>
+                        <option value='normal' selected>Normal</option>
+                        <option value='easy'>Easy</option>
+                        <option value='hard'>Hard</option>
+                        <option value='impossible'>Impossible</option>
+                    </select>
+                </div>
+                <button onclick='createSinglegame($("#gameMode").val(), $("#people1").val(), $("#people2").val(), $("#people3").val(), $("#people4").val())' style='background: #4D394B'>Create</button>
+            </ul>
+        </div>
+        <button onclick="createGame()">Create</button>
+        <button onclick="joinSingleGame()">Play Single</button>
+    </div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.27.4.min.js"></script>
+
+<script src="scripts/HTMLbuilder.js" charset="utf-8"></script>
+<script src="scripts/server.js" charset="utf-8"></script>
+<script src="scripts/game.js" charset="utf-8"></script>
+<script src="scripts/functions.js" charset="utf-8"></script>
+<script src="scripts/sudoku.js" charset="utf-8"></script>
+<script src="scripts/lobby.js" charset="utf-8"></script>
+<script src="scripts/chat.js" charset="utf-8"></script>
+
+<script type="text/javascript">
+     $(document).ready(function() {
+         $('#menu').fadeIn();
+         $('#logo').fadeIn();
+
+         if (localStorage.getItem('username')) {
+             myName = localStorage.getItem('username');
+             return;
+         }
+
+         new HTMLBuilder().add(`
+             <div id='mask'></div>
+             <div id="enterName-window">
+                 <h1>Enter your name:</h1>
+                 <input type="text" placeholder="Name..." id="username_input">
+             </div>
+         `).appendInto('body');
+
+         $("#username_input")[0].addEventListener('keyup', (e) => {
+             if (e.keyCode === 13 && $("#username_input").val()) {
+                 myName = $("#username_input").val();
+                 $("#enterName-window").remove();
+                 $("#mask").remove();
+                 localStorage.setItem('username', myName);
+             }
+         });
+     });
+</script>
+
+</body>
+</html>
